@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+  <display-name>eServe.marketPlace.calendar-web</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  
+   <context-param>
+  	<param-name>resteasy.scan</param-name>
+  	<param-value>true</param-value>
+  </context-param>
+  
+  <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/calendar</param-value>
+  </context-param>  
+  
+  <listener>
+        <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
+  </listener>
+
+  <servlet>
+  	<servlet-name>calendar</servlet-name>
+  	<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>calendar</servlet-name>
+  	<url-pattern>/calendar/*</url-pattern>
+  </servlet-mapping>
+</web-app>

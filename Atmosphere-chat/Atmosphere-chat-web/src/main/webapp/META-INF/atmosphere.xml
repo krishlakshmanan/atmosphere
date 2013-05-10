@@ -1,0 +1,11 @@
+<atmosphere-handlers>
+    <!-- RESTEasy -->
+    <atmosphere-handler support-session="false"
+                        context-root="/rest/*"
+                        class-name="org.atmosphere.handler.ReflectorServletProcessor">
+        <property name="servletClassName"  
+              value="org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher"/>
+    </atmosphere-handler>
+    <atmosphere-handler context-root="/atmosphere/*" class-name="com.atmosphere.EserveAtmosphereServlet">
+    </atmosphere-handler>
+</atmosphere-handlers>

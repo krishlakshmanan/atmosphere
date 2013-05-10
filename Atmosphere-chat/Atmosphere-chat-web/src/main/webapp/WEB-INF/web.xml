@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:j2ee="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee    http://java.sun.com/xml/ns/j2ee/web-app_2.5.xsd">
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  <context-param>
+  	<param-name>resteasy.scan</param-name>
+  	<param-value>true</param-value>
+  </context-param>
+  
+  <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/rest</param-value>
+  </context-param>  
+    <description>EserveAtmosphereServlet</description>
+    <display-name>EserveAtmosphereServlet</display-name>
+    <servlet>
+        <description>EserveAtmosphereServlet</description>
+        <servlet-name>EserveAtmosphereServlet</servlet-name>
+        <servlet-class>org.atmosphere.cpr.AtmosphereServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+     <listener>
+        <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
+  </listener>
+
+  <servlet>
+  	<servlet-name>calendar</servlet-name>
+  	<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>calendar</servlet-name>
+  	<url-pattern>/rest/*</url-pattern>
+  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EserveAtmosphereServlet</servlet-name>
+        <!-- Any mapping -->
+        <url-pattern>/atmosphere/*</url-pattern>
+    </servlet-mapping>
+</web-app>
