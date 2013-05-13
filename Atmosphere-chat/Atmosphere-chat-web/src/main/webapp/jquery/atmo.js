@@ -1,20 +1,43 @@
 var cm;
+
 var postMsg = {
-		
 		  message:"",
 		  author:"",
-		  time:"",
-		  subscriberId:""
+		  time:null
+};
+var broadcastData = {
+		subscriberId: null,
+	    contentType: null,
+	    content: null
 };
 var authors = new Array(); 
-//$(document).ready(function(){	
-	//cm = new ControlManager();
- //});
+var subscriberId = null;
+var action = null;
+
 Array.prototype.remove = function(el){
     return this.splice(this.indexOf(el),1);
-}
-function subscribeAtmosphere(){
+};
+function subscribeChat(){
+	subscriberId = $("#subscriberId").val();
 	cm = new ControlManager();
+}
+
+function agentRequest(){
+	subscriberId = $("#subscriberId").val();
+	postMsg.message = " is requesting an agent.";
+	postMsg.author = $("#status").text();
+	broadcastData.contentType = "agent:request";
+	broadcastData.subscriberId = subscriberId;
+	broadcastData.content = postMsg;
+	cm =new ControlManager();
+	post();
+}
+function subscribeAgent(){
+	subscriberId = "agents";
+	broadcastData.contentType = "agent:subscribe";
+	broadcastData.subscriberId = subscriberId;
+	broadcastData.content = postMsg;
+	cm =new ControlManager();
 }
 
 function controlConnect() {
@@ -43,73 +66,74 @@ function callback(response) {
 function controlSubscribe() {
 	if (!this.callbackAdded) {
 		var url = $.url();
-		var subscriberId = $("#subscriberId").val();
 		var location = url.attr('protocol') + '://' + url.attr('host') + ':' + url.attr('port') + '/Atmosphere-chat-web/atmosphere/subscribe';
 		location = location + "?subscriberId="+subscriberId;
 		this.connectedEndpoint = $.atmosphere.subscribe(location,
 			!callbackAdded ? this.callback : null,
 			$.atmosphere.request = { 
-				transport: 'websocket' 
+				transport: 'long-polling' 
 			}
 		);
 		
 		this.callbackAdded = true;
 	}	
 }
-
 function controlUnsubscribe(){
 	this.callbackAdded = false;
 	$.atmosphere.unsubscribe();
 }
-
 function ControlManager() {
 	this.suscribe = controlSubscribe;
 	this.unsubscribe = controlUnsubscribe;
 	this.connect = controlConnect;
 	this.callback = callback;
 	this.connect();
-	this.actions = cm_actions;
 }
-
 function showItem(id) {
 	$(id).show();
 }
-
 function hideItem(id) {
 	$(id).hide();
 }
-
 function displaymsg(data) {	
 	response = JSON.parse(data);
 	color = "gray";
-	datetime = new Date(response.time);
-	if(response.message.startsWith("Status:") && (response.author != $("#status").text())){
-		if ($.inArray(response.author,authors) == -1)
+	datetime = new Date(response.content.time);
+	if(response.contentType.match("chat:status")!=null && (response.content.author != $("#status").text())){
+		if ($.inArray(response.content.author,authors) == -1)
 		{
-			authors.push(response.author);
+			authors.push(response.content.author);
 		}
 	}
-	else if(response.message.startsWith("Remove:") && (response.author != $("#status").text())){
-		if ($.inArray(response.author,authors) != -1)
+	else if(response.contentType.match("chat:remove") != null && (response.content.author != $("#status").text())){
+		if ($.inArray(response.content.author,authors) != -1)
 		{
-			authors.remove(response.author);
+			authors.remove(response.content.author);
 		}
 	}
-	else if (!response.message.startsWith("Status:") && !response.message.startsWith("Remove:")){
-		if ($.inArray(response.author,authors) != -1)
+	else if (response.contentType.match("chat:post") != null){
+		if ($.inArray(response.content.author,authors) != -1)
 		{
-			authors.remove(response.author);
+			authors.remove(response.content.author);
 		}
-		addMessage(response.author, response.message, color, datetime);
+		addMessage(response.content.author, response.content.message, color, datetime);
+	}
+	else if(response.contentType.match("agent:request") != null){
+		alert(response.content.author +" " +response.content.message);
+		if (true)
+		{
+			$("#subscriberId").val = response.subscriberId;
+			cm = new ControlManager();
+		}
 	}
 	displayTypingMessage();
 }
 function post() {
 	var request = $.ajax({
-		url: 'rest/subscribe/toggle',
+		url: 'rest/subscribe/chat',
 		type: 'POST',
-		data: '<doc>foo</doc>',
-		contentType:"application/xml; charset=utf-8",
+		data:JSON.stringify(broadcastData),
+		contentType:"application/json; charset=utf-8",
 	});
 	request.fail(function(jqXHR, textStatus) {
   		alert( "Request failed: " + textStatus );
@@ -127,11 +151,13 @@ function chat(event) {
 		return;
 	}
 	postMsg.message = $("#input").val();
-	postMsg.subscriberId = $("#subscriberId").val();
+	broadcastData.subscriberId = $("#subscriberId").val();
+	broadcastData.contentType = "chat:post";
+	broadcastData.content = postMsg;
 	var request = $.ajax({
 		url: 'rest/subscribe/chat',
 		type: 'POST',
-		data: JSON.stringify(postMsg),
+		data: JSON.stringify(broadcastData),
 		contentType:"application/json; charset=utf-8",
 	});
     $("#input").val("");	
@@ -142,31 +168,35 @@ function chat(event) {
 }
 function sendProgress() {
 	if(postMsg.author != "" ){
-	postMsg.message = "Status:";//$("#input").val();
-	postMsg.subscriberId = $("#subscriberId").val();
+	broadcastData.contentType = "chat:status";
+	postMsg.message = "is typing ";//$("#input").val();
+	broadcastData.content = postMsg;
+	broadcastData.subscriberId = $("#subscriberId").val();
 	var request = $.ajax({
 		url: 'rest/subscribe/chat',
 		type: 'POST',
-		data: JSON.stringify(postMsg),
+		data:JSON.stringify(broadcastData),
 		contentType:"application/json; charset=utf-8",
 	});
 	request.fail(function(jqXHR, textStatus) {
-  		alert( "Request failed: " + textStatus );
+  		alert( "Request failed: sendProgress " + textStatus );
 	});
 	}
 }
 function removeProgress() {
 	if(postMsg.author != "" ){
-	postMsg.message = "Remove:";//$("#input").val();
-	postMsg.subscriberId = $("#subscriberId").val();
+	broadcastData.contentType = "chat:remove";//$("#input").val();
+	postMsg.message = "is not typing ";
+	broadcastData.content = postMsg;
+	broadcastData.subscriberId = $("#subscriberId").val();
 	var request = $.ajax({
 		url: 'rest/subscribe/chat',
 		type: 'POST',
-		data: JSON.stringify(postMsg),
+		data: JSON.stringify(broadcastData),
 		contentType:"application/json; charset=utf-8",
 	});
 	request.fail(function(jqXHR, textStatus) {
-  		alert( "Request failed: " + textStatus );
+  		alert( "Request failed: removeProgress " + textStatus );
 	});
 	}
 }

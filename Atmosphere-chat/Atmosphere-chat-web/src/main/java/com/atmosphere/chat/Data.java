@@ -1,14 +1,13 @@
 package com.atmosphere.chat;
 
+import java.io.Serializable;
 import java.util.Date;
-
-public final class Data {
+public final class Data implements Serializable {
 
 	private String message;
 	private String author;
 	private long time;
-	private String subscriberId;
-
+	
 	public Data() {
 		this("", "");
 	}
@@ -41,14 +40,6 @@ public final class Data {
 
 	public void setTime(long time) {
 		this.time = time;
-	}
-
-	public String getSubscriberId() {
-		return subscriberId;
-	}
-
-	public void setSubscriberId(String subscriberId) {
-		this.subscriberId = subscriberId;
 	}
 
 }

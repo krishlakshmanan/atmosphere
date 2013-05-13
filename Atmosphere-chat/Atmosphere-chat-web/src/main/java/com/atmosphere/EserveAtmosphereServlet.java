@@ -24,12 +24,9 @@ public class EserveAtmosphereServlet extends AbstractReflectorAtmosphereHandler 
 		String subscriberId = req.getParameter("subscriberId");
 		// Suspend the response.
 		if ("GET".equalsIgnoreCase(method)) {
-
 			// Log all events on the console, including WebSocket events.
 			event.addEventListener(new WebSocketEventListenerAdapter());
-
 			res.setContentType("text/html;charset=ISO-8859-1");
-
 			Broadcaster b = lookupBroadcaster(subscriberId);
 			if (b != null) {
 				event.setBroadcaster(b);
@@ -39,7 +36,6 @@ public class EserveAtmosphereServlet extends AbstractReflectorAtmosphereHandler 
 			if (atmoTransport != null
 					&& !atmoTransport.isEmpty()
 					&& atmoTransport.equalsIgnoreCase(HeaderConfig.LONG_POLLING_TRANSPORT)) {
-
 				req.setAttribute(ApplicationConfig.RESUME_ON_BROADCAST, Boolean.TRUE);
 				event.suspend(-1);
 			}
@@ -49,28 +45,19 @@ public class EserveAtmosphereServlet extends AbstractReflectorAtmosphereHandler 
 		}
 		else if ("POST".equalsIgnoreCase(method)) {
 			Broadcaster b = lookupBroadcaster(subscriberId);
-
 			String message = req.getReader().readLine();
-
 			if (message != null && message.indexOf("message") != -1) {
 				b.broadcast(message.substring("message=".length()));
 			}
 		}
 	}
-
 	@Override
 	public void destroy() {
 		// empty
 	}
-
-	Broadcaster lookupBroadcaster(String pathInfo) {
-		String[] decodedPath = pathInfo.split("/");
+	Broadcaster lookupBroadcaster(String subscriberId) {
 		Broadcaster b = null;
-		/*if (decodedPath[decodedPath.length - 1].equals("subscribe")) {
-			System.out.println("hi");
-			b = BroadcasterFactory.getDefault().lookup(decodedPath[decodedPath.length - 1], true);
-		}*/
-		b = BroadcasterFactory.getDefault().lookup(pathInfo, true);
+		b = BroadcasterFactory.getDefault().lookup(subscriberId, true);
 		return b;
 	}
 }
