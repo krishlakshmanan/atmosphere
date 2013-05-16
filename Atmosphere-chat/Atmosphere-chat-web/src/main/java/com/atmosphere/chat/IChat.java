@@ -17,7 +17,7 @@ public interface IChat {
 	@POST
 	@Path("/chat")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response chat(BroadcastContent data) throws JsonParseException, JsonMappingException, IOException;
+	public Response chat(BroadcastContent<?> data) throws JsonParseException, JsonMappingException, IOException;
 
 	@POST
 	@Path("/toggle")

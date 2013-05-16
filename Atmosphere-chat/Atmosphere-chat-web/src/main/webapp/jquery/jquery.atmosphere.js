@@ -59,7 +59,7 @@ jQuery.atmosphere = function() {
                 url : '',
                 data : '',
                 suspend : true,
-                maxRequest : 60,
+                maxRequest :60000,
                 maxStreamingLength : 10000000,
                 lastIndex : 0,
                 logLevel : 'info',
@@ -1105,7 +1105,7 @@ jQuery.atmosphere = function() {
                     dataType: '',
                     data : msg,
                     suspend : false,
-                    maxRequest : 60,
+                    maxRequest : 6000000,
                     logLevel : 'info',
                     requestCount : 0,
                     transport: 'polling'
@@ -1274,7 +1274,6 @@ jQuery.atmosphere = function() {
             jQuery.atmosphere.requests = [];
             jQuery.atmosphere.callbacks = [];
         },
-
         unsubscribeUrl: function(url) {
             var idx = -1;
             if (jQuery.atmosphere.requests.length > 0) {

@@ -18,7 +18,13 @@
     margin: 0px;
     border: 0px;
 }
-
+.ui-chatbox-typing {
+    padding: 3px;
+    max-width: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;http://localhost:8080/Atmosphere-chat-web/agent.html
+    background: #FFFFFF;
+}
 .ui-chatbox-log {
     padding: 3px;
     height: 250px;
@@ -26,6 +32,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     background: #FFFFFF;
+    border:none;
 }
 
 .ui-chatbox-input {
@@ -61,4 +68,7 @@
     white-space: -pre-wrap;     /* Opera <7 */
     white-space: -o-pre-wrap;   /* Opera 7 */
     word-wrap: break-word;      /* IE */
+}
+.ui-chatbox-typing p {
+  color: graytext;
 }

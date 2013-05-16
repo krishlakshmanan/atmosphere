@@ -33,15 +33,16 @@ public class ChatImpl implements IChat {
 	@POST
 	@Path("/chat")
 	public Response chat(BroadcastContent broadcastContent) throws JsonParseException, JsonMappingException, IOException {
+		System.out.println("Inside Chat ");
 		Data data = null;
 		String subscriberId =  broadcastContent.getSubscriberId();
 			data = new ObjectMapper().convertValue(broadcastContent.getContent(), Data.class);
 			data.setTime(new Date().getTime());
-			if (broadcastContent.getContentType().startsWith("agent:")){
+			if (broadcastContent.getContentType().equals("agent:request")){
 				subscriberId = "agents";
 			}
 			notifySubscribers(broadcastContent,subscriberId);
-
+			System.out.println("Data broadcasted");
 		return Response.ok().build();
 	}
 	@Override

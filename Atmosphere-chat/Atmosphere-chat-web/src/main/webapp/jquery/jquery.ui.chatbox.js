@@ -27,6 +27,7 @@
                 this.boxManager.addMsg(user.first_name, msg);
             },
             boxClosed: function(id) {
+            	
             }, // called when the close icon is clicked
             boxManager: {
                 // thanks to the widget factory facility
@@ -146,6 +147,7 @@
                     // })
                     .click(function(event) {
                 uiChatbox.hide();
+                closeChat(uiChatboxLog.context.id);
                 self.options.boxClosed(self.options.id);
                 return false;
             })
@@ -209,22 +211,25 @@
                     )
                     .appendTo(uiChatboxInput)
                     .keydown(function(event) {
-                if (event.keyCode && event.keyCode == $.ui.keyCode.ENTER) {
-                    msg = $.trim($(this).val());
-                    if (msg.length > 0) {
-                        self.options.messageSent(self.options.id, self.options.user, msg);
-                    }
-                    $(this).val('');
-                    return false;
-                }
+                	if (event.keyCode && event.keyCode == $.ui.keyCode.ENTER) {
+            		msg = $.trim($(this).val());
+            		if (msg.length > 0) {
+            			chat(this,uiChatboxLog.context.id);
+            		}
+            		$(this).val('');
+            		return false;
+            		}
+                	
             })
                     .focusin(function() {
                 uiChatboxInputBox.addClass('ui-chatbox-input-focus');
                 var box = $(this).parent().prev();
                 box.scrollTop(box.get(0).scrollHeight);
+                sendProgress(this,uiChatboxLog.context.id);
             })
                     .focusout(function() {
                 uiChatboxInputBox.removeClass('ui-chatbox-input-focus');
+                    removeProgress(this,uiChatboxLog.context.id);
             });
 
             // disable selection
