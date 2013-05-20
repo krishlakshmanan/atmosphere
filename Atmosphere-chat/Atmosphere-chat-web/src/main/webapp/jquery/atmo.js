@@ -89,7 +89,8 @@ function controlSubscribe() {
 		location = location + "?subscriberId=" + subscriberId;
 		this.connectedEndpoint = $.atmosphere.subscribe(location,
 				!callbackAdded ? this.callback : null, $.atmosphere.request = {
-					transport : 'long-polling'
+					transport : 'long-polling',
+					enableProtocol : true
 				});
 		requestMaps.put(subscriberId,this.connectedEndpoint);
 		this.callbackAdded = true;

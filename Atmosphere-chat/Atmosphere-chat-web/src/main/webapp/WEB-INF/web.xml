@@ -21,13 +21,34 @@
         <description>EserveAtmosphereServlet</description>
         <servlet-name>EserveAtmosphereServlet</servlet-name>
         <servlet-class>org.atmosphere.cpr.AtmosphereServlet</servlet-class>
+        <init-param>
+  			 <param-name>org.atmosphere.cpr.Broadcaster.supportOutOfOrderBroadcast</param-name>
+			<param-value>true</param-value>
+		</init-param>
+               <!-- Reduce memory usage by sharing ExecutorServices -->
+      <init-param>
+        <param-name>org.atmosphere.cpr.broadcaster.shareableThreadPool</param-name>
+        <param-value>true</param-value>
+      </init-param>
+      <!-- Automatically free Broadcaster objects when the last client on the Broadcaster's channel disconnects -->
+      <init-param>
+        <param-name>org.atmosphere.cpr.broadcasterLifeCyclePolicy</param-name>
+        <param-value>EMPTY_DESTROY</param-value>
+      </init-param>
+      <init-param>
+          <param-name>org.atmosphere.cpr.broadcaster.maxProcessingThreads</param-name>
+          <param-value>50</param-value>
+      </init-param>
+      <init-param>
+          <param-name>org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads</param-name>
+          <param-value>50</param-value>
+      </init-param>      
         <load-on-startup>0</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
      <listener>
         <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
   </listener>
-
   <servlet>
   	<servlet-name>calendar</servlet-name>
   	<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
@@ -41,5 +62,6 @@
         <servlet-name>EserveAtmosphereServlet</servlet-name>
         <!-- Any mapping -->
         <url-pattern>/atmosphere/*</url-pattern>
+
     </servlet-mapping>
 </web-app>
