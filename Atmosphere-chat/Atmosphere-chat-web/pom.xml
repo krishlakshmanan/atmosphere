@@ -59,17 +59,17 @@
 <dependency>
 	<groupId>org.atmosphere</groupId>
 	<artifactId>atmosphere-runtime</artifactId>
-	<version>1.1.0.RC1</version>
+	<version>1.0.13</version>
 </dependency>
 <dependency>
 	<groupId>org.atmosphere</groupId>
 	<artifactId>atmosphere-annotations</artifactId>
-	<version>1.1.0.RC1</version>
+	<version>1.0.13</version>
 </dependency>
 <dependency>
 	<groupId>org.atmosphere</groupId>
 	<artifactId>atmosphere-compat-jbossweb</artifactId>
-	<version>1.1.0.RC1</version>
+	<version>1.0.13</version>
 </dependency>
 
    	<dependency>
@@ -80,7 +80,7 @@
    	<dependency>
    		<groupId>org.atmosphere</groupId>
    		<artifactId>atmosphere-jquery</artifactId>
-   		<version>1.1.0.RC1</version>
+   		<version>1.0.13</version>
    		<type>war</type>
    	</dependency>
    	<dependency>

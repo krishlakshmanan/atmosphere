@@ -24,4 +24,6 @@ public interface IChat {
 	public Response toggle(String data);
 
 	public void notifySubscribers(Object notificationData, String subscriberId);
+
+	public void notifySubscribersGroup(Object notificationData, String groupId);
 }

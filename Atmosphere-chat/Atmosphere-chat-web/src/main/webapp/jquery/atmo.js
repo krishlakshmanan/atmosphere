@@ -1,5 +1,6 @@
 var requestMaps = null;
 var postMsg = {
+	id : "",
 	message : "",
 	author : "",
 	time : null
@@ -7,6 +8,7 @@ var postMsg = {
 callbackAdded = false;
 var broadcastData = {
 	subscriberId : null,
+	groupId : null,
 	contentType : null,
 	content : null
 };
@@ -33,20 +35,22 @@ function subscribeChat(subscriberId2) {
 }
 
 function agentRequest(subId) {
-	subscriberId = subId;
+	subscriberId= subId;
 	postMsg.message = " is requesting an agent.";
 	broadcastData.contentType = "agent:request";
-	broadcastData.subscriberId = subscriberId;
+	broadcastData.subscriberId = subId;
 	broadcastData.content = postMsg;
 	new ControlManager();
 	post(broadcastData);
 }
 function subscribeAgent() {
-	subscriberId = "agents";
+	temp = Math.floor(Math.random()*100001) + jQuery.now();
+	subscriberId ="/agents/"+ temp;
 	broadcastData.contentType = "agent:subscribe";
-	broadcastData.subscriberId = subscriberId;
+	broadcastData.subscriberId = temp;
 	broadcastData.content = postMsg;
 	new ControlManager();
+	subscriberId = temp;
 }
 
 function controlConnect() {
@@ -112,10 +116,8 @@ function displayChat(data) {
 	response = JSON.parse(data);
 	color = "gray";
 	datetime = new Date(response.content.time);
-
 	name = response.content.author;
 	msg = response.content.message;
-	subscriberId = response.subscriberId;
 
 	if (response.contentType.match("chat:status") != null
 			&& (response.content.author != postMsg.author)) {
@@ -153,11 +155,12 @@ function displayChat(data) {
 		if (confirm(response.content.author + " " + response.content.message)) {
 //			openChatWindow(response);
 			multiChat(response);
-			broadcastData = response;
+			broadcastData.subscriberId = subscriberId;
 			broadcastData.contentType = "agent:accept"; 
+			postMsg.id = response.subscriberId;
 			broadcastData.content = postMsg;
 			post(broadcastData);
-			subscribeChat(response.subscriberId);
+			//subscribeChat(response.subscriberId);
 		}
 	} else if (response.contentType.match("agent:accept") != null) {
 //		openChatWindow(response);
@@ -186,7 +189,8 @@ function setName(event) {
 			$('#authorName').text($('#authorName').text() + ' - ' + temp);
 			if($('#authorName').text().match("Client -") != null)
 			{
-				agentRequest(temp+'-'+Math.floor(Math.random()*101));
+				agentRequest(Math.floor(Math.random()*1001)+jQuery.now());
+				broadcastData.groupId = "agents";
 			}
 		}
 	}
@@ -202,18 +206,21 @@ function chat(textItem,subId) {
 	msg = $.trim($(textItem).val());
 	if (msg.length > 0) {
 		postMsg.message = $(textItem).val();
-		broadcastData.subscriberId = subId;
+		postMsg.id = subId;
 		broadcastData.contentType = "chat:post";
 		broadcastData.content = postMsg;
+		broadcastData.subscriberId = subscriberId;
 		post(broadcastData);
+		$("#"+subId).chatbox("option", "boxManager").addMsg(postMsg.author, postMsg.message);
 	}
 }
 function sendProgress(textItem,subId) {
 	if (postMsg.author != "") {
 		broadcastData.contentType = "chat:status";
 		postMsg.message = "is typing a message..";// $("#input").val();
+		postMsg.id = subId;
 		broadcastData.content = postMsg;
-		broadcastData.subscriberId = subId;
+		broadcastData.subscriberId = subscriberId;
 		post(broadcastData);
 	}
 }
@@ -221,8 +228,9 @@ function removeProgress(textItem,subId) {
 	if (postMsg.author != "") {
 		broadcastData.contentType = "chat:remove";// $("#input").val();
 		postMsg.message = "is not typing ";
+		postMsg.id = subId;
 		broadcastData.content = postMsg;
-		broadcastData.subscriberId = subId;
+		broadcastData.subscriberId = subscriberId;
 		post(broadcastData);
 	}
 }
@@ -233,6 +241,10 @@ function closeChat(subId){
 	}
 }
 function getTimeInHtml(datetime) {
+		var time = null;
+		var p = document.createElement("p");
+		var span = document.createElement("span");
+		
 /*	var time = "'<p><span style="'color:graytext'
 			+ '">'
 			+ author

@@ -37,7 +37,7 @@ public class EserveAtmosphereServlet extends AbstractReflectorAtmosphereHandler 
 					&& !atmoTransport.isEmpty()
 					&& atmoTransport.equalsIgnoreCase(HeaderConfig.LONG_POLLING_TRANSPORT)) {
 				req.setAttribute(ApplicationConfig.RESUME_ON_BROADCAST, Boolean.TRUE);
-				event.suspend(-1);
+				event.suspend(-1,false);
 			}
 			else {
 				event.suspend(-1);

@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.cpr.BroadcasterFactory;
+import org.atmosphere.cpr.MetaBroadcaster;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -40,8 +41,15 @@ public class ChatImpl implements IChat {
 			data.setTime(new Date().getTime());
 			if (broadcastContent.getContentType().equals("agent:request")){
 				subscriberId = "agents";
+				notifySubscribersGroup(broadcastContent,subscriberId);
 			}
-			notifySubscribers(broadcastContent,subscriberId);
+			else{
+				subscriberId = data.getId();
+				if (broadcastContent.getGroupId()!= null){
+					subscriberId = "/"+broadcastContent.getGroupId()+"/"+subscriberId;
+				}
+				notifySubscribers(broadcastContent,subscriberId);	
+			}
 			System.out.println("Data broadcasted");
 		return Response.ok().build();
 	}
@@ -51,6 +59,12 @@ public class ChatImpl implements IChat {
 		if (broadcaster != null)
 			broadcaster.broadcast(JsonUtils.toJson(notificationData));
 	}
+	
+	@Override
+	public void notifySubscribersGroup(Object notificationData, String groupId) {
+		 MetaBroadcaster.getDefault().broadcastTo("/"+groupId+"/*", JsonUtils.toJson(notificationData));
+	}
+	
 	@Path("/data")
 	@GET
 	@Produces("application/json")

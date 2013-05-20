@@ -8,4 +8,8 @@
     </atmosphere-handler>
     <atmosphere-handler context-root="/atmosphere/*" class-name="com.atmosphere.EserveAtmosphereServlet">
     </atmosphere-handler>
+     <applicationConfig>
+          <param-name>org.atmosphere.cpr.broadcaster.shareableThreadPool</param-name>
+          <param-value>true</param-value>
+      </applicationConfig>
 </atmosphere-handlers>

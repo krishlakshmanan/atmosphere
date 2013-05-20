@@ -3,7 +3,7 @@ package com.atmosphere.chat;
 import java.io.Serializable;
 import java.util.Date;
 public final class Data implements Serializable {
-
+	private String id;
 	private String message;
 	private String author;
 	private long time;
@@ -16,6 +16,15 @@ public final class Data implements Serializable {
 		this.author = author;
 		this.message = message;
 		this.time = new Date().getTime();
+	}
+	
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getMessage() {
